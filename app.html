@@ -1109,10 +1109,13 @@
     flex-shrink:0;
   }
   #chatCloseBtn{
-    background:transparent; border:none; color:rgba(255,255,255,0.7);
-    font-size:18px; line-height:1; cursor:pointer; padding:0 2px;
+    background:rgba(255,255,255,0.08); border:none; color:rgba(255,255,255,0.8);
+    font-size:20px; line-height:1; cursor:pointer;
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
   }
-  #chatCloseBtn:hover{ color:#fff; }
+  #chatCloseBtn:hover, #chatCloseBtn:active{ background:rgba(255,255,255,0.18); color:#fff; }
   #chatMessages{
     flex:1;
     overflow-y:auto;
@@ -2678,6 +2681,23 @@
     transition:opacity .25s ease;
   }
   .auto-save-msg.show{opacity:1;}
+
+  /* ---------- General mobile scale-down ----------
+     Several overlays (popups, the in-game menu, chat) were sized for desktop
+     and just eat the whole small screen on mobile. This trims padding/
+     font-sizes down a notch specifically under 480px without touching
+     desktop at all. */
+  @media (max-width:480px){
+    .modal-box{ max-width:calc(100vw - 32px); padding:20px 18px; }
+    .modal-icon{ width:40px; height:40px; font-size:19px; margin-bottom:10px; }
+    #gameMenuPanel{ padding:16px 16px 14px; gap:12px; border-radius:14px; }
+    #chatPanel{ height:min(300px, 46vh); border-radius:10px; }
+    .chat-header{ padding:8px 10px; font-size:12.5px; }
+    #chatMessages{ padding:8px 10px; }
+    #chatForm{ padding:8px; }
+    #gameMenuBtn{ width:34px; height:34px; }
+    #gameMenuBtn svg{ width:17px; height:17px; }
+  }
 </style>
 </head>
 <body>
@@ -5507,6 +5527,10 @@
       submitBtn.disabled = false;
       submitBtn.textContent = 'Submit';
       closeReportOverlay();
+      // Reporting a game already showed a confirmation popup, but reporting
+      // a user silently closed the overlay with zero feedback — you had no
+      // way to know whether it actually sent. Now it does the same thing.
+      showPopup('Reported', 'Thanks — your report has been submitted for review. You can check its status any time in Settings \u2192 Reports.', null, 'OK', null);
     };
     const finishError = (err) => {
       console.error('Report submit failed:', err);
